@@ -12,7 +12,7 @@ function callGemini(prompt) {
     });
     const opts = {
       hostname: 'generativelanguage.googleapis.com',
-      path: '/v1beta/models/gemini-1.5-flash:generateContent?key=' + GEMINI_KEY,
+      path: '/v1beta/models/gemini-2.0-flash-lite:generateContent?key=' + GEMINI_KEY,
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
     };
@@ -38,7 +38,7 @@ async function main() {
   const tr = new Date().toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' });
   console.log('Uretiliyor: ' + tr);
 
-  const prompt = 'Bugun (' + tr + ') icin 4 ilginc konu sec. Farkli kategoriler: bilim, sanat, teknoloji, felsefe, doga, tarih. Sadece JSON: {"updated":"' + iso + '","items":[{"baslik":"kisa","kategori":"tek kelime","ozet":"2-3 cumle Turkce","url":null}]} 4 farkli kategori.';
+  const prompt = 'Bugun (' + tr + ') icin 4 ilginc konu sec. Farkli kategoriler: bilim, sanat, teknoloji, felsefe, doga, tarih. Sadece JSON don: {"updated":"' + iso + '","items":[{"baslik":"kisa","kategori":"tek kelime","ozet":"2-3 cumle Turkce","url":null}]} 4 farkli kategori.';
 
   let raw;
   try { raw = await callGemini(prompt); }
