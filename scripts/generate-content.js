@@ -12,6 +12,41 @@ function callGemini(prompt) {
     });
     const options = {
       hostname: 'generativelanguage.googleapis.com',
+      path: '/v1beta/models/gemini-1.5-flash:generateContent?key=' + GEMINI_KEY,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
+    };
+    const req = https.request(options, res => {
+      let data = '';
+      res.on('data', chunk => (data += chunk));
+      res.on('end', () => {
+        try {
+          const parsed = JSON.parse(data);
+          if (parsed.error) return reject(new Error(parsed.error.message));
+          resolve(parsed.candidates[0].content.parts[0].text);
+        } catch (e) { reject(e); }
+      });
+    });
+    req.on('error', reject);
+    req.write(body);
+    req.end();
+  });
+}
+
+async function main() {const https = require('https');
+const fs = require('fs');
+
+const GEMINI_KEY = process.env.GEMINI_API_KEY;
+if (!GEMINI_KEY) { console.error('GEMINI_API_KEY eksik!'); process.exit(1); }
+
+function callGemini(prompt) {
+  return new Promise((resolve, reject) => {
+    const body = JSON.stringify({
+      contents: [{ parts: [{ text: prompt }] }],
+      generationConfig: { maxOutputTokens: 1200, temperature: 0.85 }
+    });
+    const options = {
+      hostname: 'generativelanguage.googleapis.com',
       path: '/v1beta/models/gemini-2.0-flash:generateContent?key=' + GEMINI_KEY,
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'Content-Length': Buffer.byteLength(body) }
