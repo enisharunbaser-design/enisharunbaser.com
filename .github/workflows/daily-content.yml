@@ -1,0 +1,25 @@
+name: Gunluk Icerik Guncelle
+
+on:
+  schedule:
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+
+jobs:
+  update-content:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Icerik uret
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python scripts/generate.py
+      - name: Commit ve push
+        run: |
+          git config user.name "content-bot"
+          git config user.email "bot@enisharunbaser.com"
+          git add content.json
+          git diff --staged --quiet || git commit -m "icerik: $(date +%Y-%m-%d)"
+          git push
